@@ -11,3 +11,4 @@ streamlit
 supabase
 python-dotenv
 joblib
+reportlab
