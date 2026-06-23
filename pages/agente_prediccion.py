@@ -2,9 +2,11 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 from supabase import create_client
 from zscore_calculator import calcular_zscores
+from reporte_pdf import generar_reporte_pdf
 
 
 def generar_recomendacion(prediccion, edad_meses, zscore_pe, zscore_te, area_cod, altitud):
@@ -189,8 +191,46 @@ if st.button("Evaluar riesgo de anemia", use_container_width=True):
         col_a, col_b, col_c, col_d = st.columns(4)
         col_a.metric("Talla/Edad",  z_talla)
         col_b.metric("Peso/Edad",   z_peso)
-        col_c.metric("Peso/Talla",  z_peso_talla)
+        col_c.metric("Peso/Talla\u00a0", z_peso_talla)
         col_d.metric("IMC",         z_imc)
+
+    # ── Descarga del reporte PDF ──────────────────────────────────────────────
+    st.divider()
+    st.subheader("📄 Descargar Reporte")
+
+    with st.spinner("Generando PDF..."):
+        try:
+            pdf_bytes = generar_reporte_pdf(
+                edad_meses    = int(edad_meses),
+                peso_kg       = float(peso_kg),
+                talla_cm      = float(talla_cm),
+                altitud       = int(altitud),
+                sexo          = sexo,
+                area          = area,
+                departamento  = departamento,
+                z_talla       = float(z_talla),
+                z_peso        = float(z_peso),
+                z_peso_talla  = float(z_peso_talla),
+                z_imc         = float(z_imc),
+                resultado     = resultado,
+                proba         = float(proba),
+                urgencia      = urgencia,
+                recomendaciones = recomendaciones,
+            )
+            nombre_archivo = (
+                f"reporte_anemia_{departamento.lower().replace(' ', '_')}"
+                f"_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            )
+            st.download_button(
+                label     = "Descargar Reporte PDF",
+                data      = pdf_bytes,
+                file_name = nombre_archivo,
+                mime      = "application/pdf",
+                use_container_width = True,
+            )
+            st.caption("El reporte incluye datos del niño, resultado, z-scores y recomendaciones.")
+        except Exception as e:
+            st.warning(f"No se pudo generar el PDF: {e}")
 
     # Guardar en Supabase
     try:
@@ -209,9 +249,9 @@ if st.button("Evaluar riesgo de anemia", use_container_width=True):
             "resultado"   : resultado,
             "probabilidad": float(round(proba, 4))
         }).execute()
-        st.caption("✓ Consulta guardada en base de datos")
+        st.caption("Consulta guardada en base de datos")
     except Exception as e:
-        st.caption(f"⚠️ No se pudo guardar en base de datos: {e}")
+        st.caption(f"No se pudo guardar en base de datos: {e}")
 
 st.divider()
 st.caption(

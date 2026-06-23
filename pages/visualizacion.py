@@ -4,14 +4,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-# ── Configuración ────────────────────────────────────────────────────────────
+# Configuración
 st.set_page_config(
     page_title="Visualización | Anemia Infantil",
     page_icon="📊",
     layout="wide"
 )
 
-# ── Carga de datos ────────────────────────────────────────────────────────────
+# Carga de datos
 @st.cache_data
 def cargar_datos():
     df = pd.read_csv("ENDES_Anemia_Hogar_2019_2024_LIMPIO.csv")
@@ -25,7 +25,7 @@ def cargar_datos():
 
 df = cargar_datos()
 
-# ── Paleta ────────────────────────────────────────────────────────────────────
+# Paleta 
 COLOR_MAP = {
     "Sin anemia": "#4CAF50",
     "Leve":       "#FFC107",
@@ -34,7 +34,7 @@ COLOR_MAP = {
 }
 AZUL_PRINCIPAL = "#1565C0"
 
-# ── Encabezado ────────────────────────────────────────────────────────────────
+# Encabezado 
 st.title("📊 Visualización de Datos — Anemia Infantil")
 st.markdown(
     "Exploración visual del dataset **ENDES 2019–2024** con "
@@ -42,7 +42,7 @@ st.markdown(
 )
 st.divider()
 
-# ── Filtros laterales ─────────────────────────────────────────────────────────
+# Filtros laterales
 with st.sidebar:
     st.header("🎛️ Filtros")
 
@@ -78,7 +78,7 @@ if dff.empty:
     st.warning("No hay datos con los filtros seleccionados.")
     st.stop()
 
-# ── KPIs ──────────────────────────────────────────────────────────────────────
+# KPIs 
 total        = len(dff)
 con_anemia   = dff["Tiene_Anemia"].sum()
 sin_anemia   = total - con_anemia
@@ -93,9 +93,7 @@ k4.metric("Casos severos", f"{(dff['Nivel_Anemia']=='Severa').sum():,}", f"{pct_
 
 st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════════
 # FILA 1 — Distribución general + Tendencia temporal
-# ════════════════════════════════════════════════════════════════════════════════
 col1, col2 = st.columns([1, 2])
 
 with col1:
@@ -131,9 +129,7 @@ with col2:
 
 st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════════
 # FILA 2 — Zonas con más niños con anemia
-# ════════════════════════════════════════════════════════════════════════════════
 st.subheader("🗺️ Zonas con mayor número de niños con anemia")
 
 col3, col4 = st.columns([3, 2])
@@ -189,9 +185,7 @@ with col4:
 
 st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════════
 # FILA 3 — Edad con mayor número de niños con anemia
-# ════════════════════════════════════════════════════════════════════════════════
 st.subheader("👶 Edad con mayor número de niños con anemia")
 
 col5, col6 = st.columns(2)
@@ -238,9 +232,7 @@ with col6:
 
 st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════════
 # FILA 4 — Urbano vs Rural + Hemoglobina
-# ════════════════════════════════════════════════════════════════════════════════
 st.subheader("🏘️ Área de residencia y niveles de hemoglobina")
 
 col7, col8 = st.columns(2)
@@ -274,9 +266,7 @@ with col8:
 
 st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════════
 # FILA 5 — Mapa de calor: Departamento × Año
-# ════════════════════════════════════════════════════════════════════════════════
 st.subheader("🔥 Mapa de calor: casos de anemia por departamento y año")
 
 heatmap_data = (
@@ -299,9 +289,7 @@ st.plotly_chart(fig_heat, use_container_width=True)
 
 st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════════
 # FILA 6 — Altitud vs anemia + Z-scores
-# ════════════════════════════════════════════════════════════════════════════════
 st.subheader("⛰️ Relación entre altitud, estado nutricional y anemia")
 
 col9, col10 = st.columns(2)
