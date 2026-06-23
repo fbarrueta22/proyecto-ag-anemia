@@ -2,8 +2,12 @@ pandas
 matplotlib
 seaborn
 plotly
-numpy 
+numpy
 scikit-learn
 xgboost
 imbalanced-learn
 pyreadstat
+streamlit
+supabase
+python-dotenv
+joblib
