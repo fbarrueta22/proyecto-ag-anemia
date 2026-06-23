@@ -3,3 +3,7 @@ matplotlib
 seaborn
 plotly
 numpy 
+scikit-learn
+xgboost
+imbalanced-learn
+pyreadstat
